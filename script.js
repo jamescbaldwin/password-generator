@@ -1,45 +1,89 @@
 var specList = ["!", "@", "#", "$", "%", "^", "&", "*", "(", ")"];
 var numberList = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
-var lowecaseList = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
-var uppercaseList = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
-var passwordEl = document.getElementsByClassName(".card-body");
-var clickButton = document.getElementById("#generate");
-console.log('clickButton:', clickButton);
+var lowercaseList = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"];
+// var uppercaseList = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
+var passwordEl = document.querySelector("#password");
+var generateEl = document.querySelector("#generate");
+// console.log('generateEl:', generateEl)
+var userChoices;
+var capitalize = function (x) {
+    return x.toUpperCase();
+};
 
-var charSum = specList.concat(numberList, lowecaseList, uppercaseList);
+var uppercaseList = lowercaseList.map(capitalize);
+console.log('uppercaseList:', uppercaseList);
 
-var product = []
+generateEl.addEventListener("click", function () {
+    pw = generatePassword();
+    document.getElementById("password").placeholder = pw;
+});
 
 function generatePassword() {
-    var passwordLength = prompt("How many characters will your password contain?");
-    if (passwordLength > 7 || passwordLength < 129) {
-        answerSpec = confirm("Shall your password contain any special characters?");
-        answerNumber = confirm("Shall your password contain any integers?");
-        answerLower = confirm("Shall your password contain any lowercase letters?");
-        answerUpper = confirm("Shall you password contain any uppercase letters?");
+    quantify = parseInt(prompt("How many total characters will your password contain?"));
+    console.log('The password is ' + quantify  + ' characters long')
+    if (!quantify) {
+        alert("Please select a value between 8 and 128!");
+    } else if (quantify < 8 || quantify > 128) {
+        quantify = parseInt(prompt("Please select a value between 8 and 128!"));
+    } else {
+        answerSpec = confirm("Click OK if you would like your password to contain any special characters - otherwise click cancel.");
+        answerNumber = confirm("Click OK if you would like your password to contain any integers - otherwise click cancel.");
+        answerLower = confirm("Click OK if you would like your password to contain any lowercase letters - otherwise click cancel.");
+        answerUpper = confirm("Click OK if you would like you password to contain any uppercase letters - otherwise click cancel.");
+    };
+
+    if (!answerSpec && !answerNumber && !answerLower && !answerUpper) {
+        userChoices = alert("You must ok at least one criterion!");
+    } else if (answerSpec && answerNumber && answerLower && answerUpper) {
+        userChoices = specList.concat(numberList, lowercaseList, uppercaseList);
+    } 
+        
+    else if (answerSpec && answerNumber && answerUpper) {
+        userChoices = specList.concat(numberList, uppercaseList);
+    } else if (answerSpec && answerUpper && answerLower) {
+        userChoices = specList.concat(uppercaseList, lowercaseList);
+    } else if (answerSpec && answerNumber && answerLower) {
+        userChoices = specList.concat(numberList, lowercaseList);
+    } else if (answerUpper && answerNumber && answerLower) {
+        userChoices = uppercaseList.concat(numberList, lowercaseList);
     }
-    else {
-        prompt("please choose a password length between 8 and 128 characters")
+
+    else if (answerSpec && answerNumber) {
+        userChoices = specList.concat(numberList);
+    } else if (answerSpec && answerUpper) {
+        userChoices = specList.concat(uppercaseList);
+    } else if (answerSpec && answerLower) {
+        userChoices = specList.concat(lowercaseList);
+    } else if (answerNumber && answerUpper) {
+        userChoices = numberList.concat(uppercaseList);
+    } else if (answerLower && answerNumber) {
+        userChoices = lowercaseList.concat(numberList);
+    } else if (answerLower && answerUpper) {
+        userChoices = lowercaseList.concat(uppercaseList);
     }
+
+    else if (answerSpec) {
+        userChoices = specList;
+    } else if (answerNumber) {
+        userChoices = numberList;
+    } else if (answerUpper) {
+        userChoices = uppercaseList;
+    } else if (answerLower) {
+        userChoices = lowercaseList;
+    };
+
+    var password = [];
+
+    for (var i = 0; i < quantify; i++) {
+        var pickChoices = userChoices[Math.floor(Math.random() * userChoices.length)];
+        password.push(pickChoices);
+    }
+
+    var pw = password.join("");
+    UserInput(pw);
+    return pw;
 }
 
-function confirmCriteria() {
-    var confirmLength = alert("You have selected to generate a password length of " + passwordLength + "characters!");
-    if (answerSpec === true) alert("You have selected to include special characters in your password!");
-    else alert("You have selected to not include special characters in your password!");
-
-    if (answerNumber === true) alert("You have selected to include numbers in your password!");
-    else alert("You have selected to not include numbers in your password!");
-
-    if (answerLower === true) alert("You have selected to include lowercase letters in your password!");
-    else alert("You have selected to not include lowercase letters in your password!");
-
-    if (answerUpper === true) alert("You have selected to include uppercase letters in your password!");
-    else alert("You have selected to not include uppercase letters in your password!");
+function UserInput(ps) {
+    document.getElementById("password").textContent = ps;
 }
-
-for (var i=0; i<string_length; i++) {
-    var rnum = Math.floor(Math.random() * charSum.length);
-    randomstring += charSum.substring(rnum,rnum+1);
-}
-
